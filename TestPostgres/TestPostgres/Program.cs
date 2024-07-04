@@ -25,6 +25,9 @@ namespace TestPostgres
                     Console.WriteLine("\n1. Добавить пользователя");
                     Console.WriteLine("2. Удалить пользователя");
                     Console.WriteLine("3. Вывести информацию о пользователях");
+                    Console.WriteLine("4. Добавить новую роль");
+                    Console.WriteLine("5. Удалить роль");
+                    Console.WriteLine("6. Вывести список ролей");
                     Console.Write("Выберите действие: ");
                     var choice = Console.ReadLine();
                     switch (choice)
@@ -42,6 +45,19 @@ namespace TestPostgres
                         case "3":
                             ShowUsers(connection);
                             break;
+                        case "4":
+                            Console.Write("Введите имя роли: ");
+                            var role_name = Console.ReadLine();
+                            AddRole(connection, role_name);
+                            break;
+                        case "5":
+                            Console.Write("Введите ID роли для удаления: ");
+                            var roleIdToDelete = Convert.ToInt32(Console.ReadLine());
+                            DeleteRole(connection, roleIdToDelete);
+                            break;
+                        case "6":
+                            ShowRoles(connection);
+                            break;
                         default:
                             Console.WriteLine("Неверный выбор.");
                             Flag = false;
@@ -51,6 +67,7 @@ namespace TestPostgres
             }
             Console.ReadKey();
         }
+
         private static void AddUser(NpgsqlConnection connection, string username)
         {
             var sql = "INSERT INTO Users (user_id, username) VALUES (nextval('user_id_seq'), @Username)";
@@ -64,6 +81,7 @@ namespace TestPostgres
             connection.Execute(sql, new { UserId = userId });
             Console.WriteLine("Пользователь успешно удален.");
         }
+
         private static void ShowUsers(NpgsqlConnection connection)
         {
             var sql = "SELECT * FROM Users";
@@ -73,6 +91,31 @@ namespace TestPostgres
                 Console.WriteLine($"ID: {user.user_id}, Username: {user.username}");
             }
         }
+
+        private static void AddRole(NpgsqlConnection connection, string role_name)
+        {
+            var sql = "INSERT INTO Roles (role_id, role_name) VALUES (nextval('user_id_seq'), @Role)";
+            connection.Execute(sql, new {Role =  role_name });
+            Console.WriteLine("Новая роль успешно создана!");
+        }
+
+        private static void DeleteRole(NpgsqlConnection connection, int role_id)
+        {
+            var sql = "DELETE FROM Roles WHERE role_id = @RoleId";
+            connection.Execute(sql, new { RoleId = role_id });
+            Console.WriteLine("Роль удалена.");
+        }
+
+        private static void ShowRoles(NpgsqlConnection connection)
+        {
+            var sql = "SELECT * FROM Roles";
+            var roles = connection.Query<Role>(sql);
+            foreach (var role in roles)
+            {
+                Console.WriteLine($"ID: {role.role_id}, Role: {role.role_name}");
+            }
+        }
+
         // Метод для получения строки подключения из конфигурационного файла
         private static string GetConnectionString()
         {
@@ -89,9 +132,16 @@ namespace TestPostgres
             return jsonObject.ConnectionStrings.TestTimeManagement;
         }
     }
+
     public class User
     {
         public int user_id { get; set; }
         public string username { get; set; }
+    }
+
+    public class Role
+    {
+        public int role_id { get; set; }
+        public string role_name { get; set; }
     }
 }
