@@ -18,3 +18,5 @@ CREATE TABLE UserRoles (
   FOREIGN KEY (user_id) REFERENCES Users(user_id),
   FOREIGN KEY (role_id) REFERENCES Roles(role_id)
 );
+
+CREATE SEQUENCE user_id_seq;
