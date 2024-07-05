@@ -153,9 +153,11 @@ namespace TestPostgres
                       "JOIN UserRoles ON Users.user_id = UserRoles.user_id " +
                       "JOIN Roles ON UserRoles.role_id = Roles.role_id";
             var userRoles = connection.Query(sql);
+            Console.WriteLine("Users\tRoles");
+            Console.WriteLine("-----------------------------");
             foreach (var userRole in userRoles)
             {
-                Console.WriteLine($"Пользователь: {userRole.username}, Роль: {userRole.role_name}");
+                Console.WriteLine($"Username: {userRole.username}\t Role: {userRole.role_name}");
             }
         }
         private static void CountUsersInRoles(NpgsqlConnection connection)
@@ -208,7 +210,7 @@ namespace TestPostgres
             Console.WriteLine("8. Показать пользователей с ролями");
             Console.WriteLine("9. Подсчитать количество пользователей в каждой роли");
             Console.WriteLine("10. Удалить пользователя из роли");
-            Console.WriteLine("11. Показать пользователей и их роли");
+            Console.WriteLine("11. Показать пользователей и роли");
             Console.WriteLine("12. Вызвать меню действий");
             Console.WriteLine("13. Выход");
         }
