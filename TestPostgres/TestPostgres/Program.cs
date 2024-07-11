@@ -100,7 +100,12 @@ namespace TestPostgres
             string GetConnectionString()
             {
                 // Путь к файлу конфигурации
-                var configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
+                var configFilePath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+
+                if (!File.Exists(configFilePath))
+                {
+                    throw new FileNotFoundException($"Файл конфигурации appsettings.json не найден по пути: {configFilePath}");
+                }
 
                 // Читаем файл конфигурации
                 var config = File.ReadAllText(configFilePath);
